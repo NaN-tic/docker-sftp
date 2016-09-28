@@ -4,6 +4,7 @@ export DEBIAN_FRONTEND=noninteractive
 
 userConfPath="/etc/sftp-users.conf"
 userConfFinalPath="/var/run/sftp-users.conf"
+echo "Gets here"
 
 function printHelp() {
     echo "Add users as command arguments, STDIN or mounted in $userConfPath"
@@ -96,6 +97,7 @@ if [ "$1" == "--readme" ]; then
     exit 0
 fi
 
+echo "Gets here"
 # Create users only on first run
 if [ ! -f "$userConfFinalPath" ]; then
 
@@ -144,6 +146,8 @@ if [ ! -f "$userConfFinalPath" ]; then
     echo "Done"
 fi
 
+
+echo "Gets here2"
 # Source custom scripts, if any
 if [ -d /etc/sftp.d ]; then
     for f in /etc/sftp.d/*; do
@@ -155,6 +159,7 @@ if [ -d /etc/sftp.d ]; then
     unset f
 fi
 
+echo "Gets here3"
 echo "Running server with $userConfFinalPath"
 
 exec /usr/sbin/sshd -D -e
