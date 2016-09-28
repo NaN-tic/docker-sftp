@@ -4,7 +4,6 @@ export DEBIAN_FRONTEND=noninteractive
 
 userConfPath="/etc/sftp-users.conf"
 userConfFinalPath="/var/run/sftp-users.conf"
-echo "Gets here"
 
 function printHelp() {
     echo "Add users as command arguments, STDIN or mounted in $userConfPath"
@@ -97,26 +96,24 @@ if [ "$1" == "--readme" ]; then
     exit 0
 fi
 
-echo "Gets here"
 # Create users only on first run
 if [ ! -f "$userConfFinalPath" ]; then
 
     # Append mounted config to final config
     if [ -f "$userConfPath" ]; then
-        echo "Creating user $(cat $userConfPath)"
         cat "$userConfPath" | grep -v -e '^$' > "$userConfFinalPath"
     fi
 
     # Append users from arguments to final config
-    for user in "$@"; do
-        echo "Creating user $user"
-        echo "$user" >> "$userConfFinalPath"
-    done
+    if [ ! -z "$USER" ]; then
+      for user in "$USER"; do
+          echo "$user" >> "$userConfFinalPath"
+      done
+    fi
 
     # Append users from STDIN to final config
     if [ ! -t 0 ]; then
         while IFS= read -r user || [[ -n "$user" ]]; do
-            echo "Creating user $user"
             echo "$user" >> "$userConfFinalPath"
         done
     fi
@@ -130,11 +127,9 @@ if [ ! -f "$userConfFinalPath" ]; then
 
     # Import users from final conf file
     while IFS= read -r user || [[ -n "$user" ]]; do
-        echo "Importing user $user"
         createUser "$user"
     done < "$userConfFinalPath"
 
-    echo "SSH keys"
     # Generate unique ssh keys for this container, if needed
     if [ ! -f /etc/ssh/ssh_host_ed25519_key ]; then
         ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N '' < /dev/null
@@ -142,12 +137,8 @@ if [ ! -f "$userConfFinalPath" ]; then
     if [ ! -f /etc/ssh/ssh_host_rsa_key ]; then
         ssh-keygen -t rsa -b 4096 -f /etc/ssh/ssh_host_rsa_key -N '' < /dev/null
     fi
-
-    echo "Done"
 fi
 
-
-echo "Gets here2"
 # Source custom scripts, if any
 if [ -d /etc/sftp.d ]; then
     for f in /etc/sftp.d/*; do
@@ -159,7 +150,6 @@ if [ -d /etc/sftp.d ]; then
     unset f
 fi
 
-echo "Gets here3"
-echo "Running server with $userConfFinalPath"
+echo "Running server"
 
-exec /usr/sbin/sshd -D
+exec /usr/sbin/sshd -D -e
