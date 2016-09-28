@@ -148,4 +148,6 @@ if [ -d /etc/sftp.d ]; then
     unset f
 fi
 
+echo "Running server with $user"
+
 exec /usr/sbin/sshd -D -e
