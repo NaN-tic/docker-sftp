@@ -101,17 +101,20 @@ if [ ! -f "$userConfFinalPath" ]; then
 
     # Append mounted config to final config
     if [ -f "$userConfPath" ]; then
+        echo "Creating user $(cat $userConfPath)"
         cat "$userConfPath" | grep -v -e '^$' > "$userConfFinalPath"
     fi
 
     # Append users from arguments to final config
     for user in "$@"; do
+        echo "Creating user $user"
         echo "$user" >> "$userConfFinalPath"
     done
 
     # Append users from STDIN to final config
     if [ ! -t 0 ]; then
         while IFS= read -r user || [[ -n "$user" ]]; do
+            echo "Creating user $user"
             echo "$user" >> "$userConfFinalPath"
         done
     fi
@@ -125,9 +128,11 @@ if [ ! -f "$userConfFinalPath" ]; then
 
     # Import users from final conf file
     while IFS= read -r user || [[ -n "$user" ]]; do
+        echo "Importing user $user"
         createUser "$user"
     done < "$userConfFinalPath"
 
+    echo "SSH keys"
     # Generate unique ssh keys for this container, if needed
     if [ ! -f /etc/ssh/ssh_host_ed25519_key ]; then
         ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N '' < /dev/null
@@ -135,6 +140,8 @@ if [ ! -f "$userConfFinalPath" ]; then
     if [ ! -f /etc/ssh/ssh_host_rsa_key ]; then
         ssh-keygen -t rsa -b 4096 -f /etc/ssh/ssh_host_rsa_key -N '' < /dev/null
     fi
+
+    echo "Done"
 fi
 
 # Source custom scripts, if any
@@ -148,6 +155,6 @@ if [ -d /etc/sftp.d ]; then
     unset f
 fi
 
-echo "Running server with $user"
+echo "Running server with $userConfFinalPath"
 
 exec /usr/sbin/sshd -D -e
