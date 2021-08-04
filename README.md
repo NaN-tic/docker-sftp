@@ -1,7 +1,6 @@
 # Supported tags and respective `Dockerfile` links
 
-- [`debian-jessie`, `debian`, `latest` (*Dockerfile*)](https://github.com/atmoz/sftp/blob/master/Dockerfile) [![](https://images.microbadger.com/badges/image/atmoz/sftp.svg)](http://microbadger.com/images/atmoz/sftp "Get your own image badge on microbadger.com")
-- [`alpine-3.4`, `alpine` (*Dockerfile*)](https://github.com/atmoz/sftp/blob/alpine/Dockerfile) [![](https://images.microbadger.com/badges/image/atmoz/sftp:alpine.svg)](http://microbadger.com/images/atmoz/sftp "Get your own image badge on microbadger.com")
+- [`latest` (*Dockerfile*)](https://github.com/nan-tic/docker-sftp/blob/master/Dockerfile)
 
 # Securely share your files
 
@@ -29,7 +28,7 @@ This is an automated build linked with the [debian](https://hub.docker.com/_/deb
 ## Simplest docker run example
 
 ```
-docker run -p 22:22 -d atmoz/sftp foo:pass:::upload
+docker run -p 22:22 -d nantic/sftp foo:pass:::upload
 ```
 
 User "foo" with password "pass" can login with sftp and upload files to a folder called "upload". No mounted directories or custom UID/GID. Later you can inspect the files and use `--volumes-from` to mount them somewhere else (or see next example).
@@ -41,7 +40,7 @@ Let's mount a directory and set UID:
 ```
 docker run \
     -v /host/share:/home/foo/share \
-    -p 2222:22 -d atmoz/sftp \
+    -p 2222:22 -d nantic/sftp \
     foo:123:1001
 ```
 
@@ -49,7 +48,7 @@ docker run \
 
 ```
 sftp:
-    image: atmoz/sftp
+    image: nantic/sftp
     volumes:
         - /host/share:/home/foo/share
     ports:
@@ -71,7 +70,7 @@ docker run \
     -v /host/share:/home/foo/share \
     -v /host/documents:/home/foo/documents \
     -v /host/http:/home/bar/http \
-    -p 2222:22 -d atmoz/sftp
+    -p 2222:22 -d nantic/sftp
 ```
 
 /host/users.conf:
