@@ -1,5 +1,4 @@
-FROM debian:jessie
-MAINTAINER Adrian Dvergsdal [atmoz.net]
+FROM debian:10-slim
 
 # - Install packages
 # - OpenSSH needs /var/run/sshd to run
