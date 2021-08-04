@@ -104,6 +104,11 @@ if [ ! -f "$userConfFinalPath" ]; then
         cat "$userConfPath" | grep -v -e '^$' > "$userConfFinalPath"
     fi
 
+    for user in "$@"; do
+        echo "Creating user $user"
+        echo "$user" >> "$userConfFinalPath"
+    done
+
     # Append users from arguments to final config
     if [ ! -z "$USER" ]; then
       for user in "$USER"; do
