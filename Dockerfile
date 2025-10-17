@@ -1,4 +1,4 @@
-FROM debian:11-slim
+FROM debian:13-slim
 
 # - Install packages
 # - OpenSSH needs /var/run/sshd to run
